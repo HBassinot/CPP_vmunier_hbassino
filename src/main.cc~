@@ -1,0 +1,8 @@
+#include <iostream>
+
+using namespace std;
+
+int main(void) {
+    cout << "dans le main !" << endl;
+    return 0;
+}
