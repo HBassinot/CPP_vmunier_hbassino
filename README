@@ -1,3 +1,7 @@
+Points importants :
+Les classes SerialWriter et SerialReader ne doivent pas être paramétrées.
+Ce sont certaines de leurs méthodes qui doivent l'être (write, read et read_alloc).
+
 Mettons que l'utilisateur de la bibliothèque possède 2 classes Voiture
 et Roue qu'il souhaite sérialiser :
 class Voiture {
@@ -58,4 +62,25 @@ static Roue* read_alloc(SerialReader& sr) {
 
 };
 
+Le format de stockage dans le fichier binaire est :
+pour une type basique : <typeid> <valeur>
+pour une instance de classe : <type de la classe> <membres à sérialiser>...
+
+La bibliothèque fournit les classes SerializeReader et SerializeWriter.
+Le code de la fonction read est :
+    template <typename T>
+    void read(T& val) {
+	string typeIdName;
+	m_infile >> typeIdName;
+
+	cout << typeIdName << endl;
+	//!! ce test sert à vérifier que le type présent dans le fichier de stockage binaire
+        // correspond bien au type de la valeur demandé
+        if (typeIdName != typeid(T).name()) {
+            cout << "error of type in read" << endl;
+            return;
+        }
+
+	m_infile >> val;
+    }
 
