@@ -1,0 +1,61 @@
+Mettons que l'utilisateur de la bibliothèque possède 2 classes Voiture
+et Roue qu'il souhaite sérialiser :
+class Voiture {
+  private:
+    Roue roueAvantG;
+    Roue roueAvantD;
+    Roue roueArriereG;
+    Roue roueArriereD;
+
+  public:
+    setRoueAvantG(Roue rAG) { roueAvantG = rAG; }
+    ...
+    getRoueAvantG() { return roueAvantG; }
+    ...
+};
+
+class Roue {
+  private:
+    long diametre;
+    public:
+    // constructeur, getter et setter
+};
+
+Pour chaque type sérialisable T, l'utilisateur doit spécifier la classe Serialize et définir les 3 méthodes static : write, read et read_alloc.
+L'utilisateur doit donc créer Serialize<Voiture> et Serialize<Roue> qu'il pourrait implémenter comme ceci :
+
+Serialize<Voiture> {
+static void write(SerialWriter& sw, const Voiture& voiture) {
+   sw.write(voiture.getRoueAvantG());
+}
+
+static void read(SerialReader& sr, Voiture& voiture) {
+       sr.read(voiture.getRoueAvantG());
+}
+
+static Voiture* read_alloc(SerialReader& sr) {
+      Voiture *voiture = new Voiture();
+      voiture.setRoueAvantG(sr<Roue>.read_alloc());
+      return voiture;
+}
+
+};
+
+Serialize<Roue> {
+static void write(SerialWriter& sw, const Roue& roue) {
+   sw.write(roue.getDiametre());
+}
+
+static void read(SerialReader& sr, Roue& roue) {
+       sw.read(roue.diametre);
+}
+
+static Roue* read_alloc(SerialReader& sr) {
+       Roue *roue = new Roue();
+       roue.setDiametre(sr<long>.read_alloc());
+       return roue;
+}
+
+};
+
+
